@@ -73,22 +73,22 @@ func paramParse(query interface{}) (string, error) {
 
 func paramParseStruct(v *url.Values, query interface{}) error {
 	var (
-		s = reflect.ValueOf(query)
-		t = reflect.TypeOf(query)
+		va = reflect.ValueOf(query)
+		t  = reflect.TypeOf(query)
 	)
 	for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
-		s = s.Elem()
-		t = s.Type()
+		va = va.Elem()
+		t = va.Type()
 	}
 
 	if t.Kind() != reflect.Struct {
-		return errors.New("Can not parse QueryString.")
+		return errors.New("Can't parse Query.")
 	}
 
 	for i := 0; i < t.NumField(); i++ {
 		var name string
 
-		field := s.Field(i)
+		field := va.Field(i)
 		typeField := t.Field(i)
 
 		if !field.CanInterface() {
@@ -128,18 +128,14 @@ func paramParseStruct(v *url.Values, query interface{}) error {
 func prepareRequestBody(b interface{}) (io.Reader, error) {
 	switch b.(type) {
 	case string:
-		// treat is as text
 		return strings.NewReader(b.(string)), nil
 	case io.Reader:
-		// treat is as text
 		return b.(io.Reader), nil
 	case []byte:
-		//treat as byte array
 		return bytes.NewReader(b.([]byte)), nil
 	case nil:
 		return nil, nil
 	default:
-		// try to jsonify it
 		j, err := json.Marshal(b)
 		if err == nil {
 			return bytes.NewReader(j), nil

@@ -65,7 +65,7 @@ func (r Request) NewRequest() (*http.Request, error) {
 		if e != nil {
 			return nil, &Error{Err: e}
 		}
-		// http://127.0.0.1?user=goxhttp
+		// http://127.0.0.1?user={}
 		r.Url = r.Url + "?" + param
 	}
 
