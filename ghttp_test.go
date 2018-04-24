@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Swxctx/ghttp"
+	"github.com/swxctx/ghttp"
 )
 
 func TestSimpleRequest(t *testing.T) {
