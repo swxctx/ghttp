@@ -12,29 +12,35 @@ import (
 	"strings"
 )
 
+// reqtimeout
 type reqtimeout interface {
 	Timeout() bool
 }
 
+// Error
 type Error struct {
 	timeout bool
 	Err     error
 }
 
+// compression
 type compression struct {
 	writer          func(buffer io.Writer) (io.WriteCloser, error)
 	reader          func(buffer io.Reader) (io.ReadCloser, error)
 	ContentEncoding string
 }
 
+// Timeout
 func (e *Error) Timeout() bool {
 	return e.timeout
 }
 
+// Error
 func (e *Error) Error() string {
 	return e.Err.Error()
 }
 
+// addHeaders
 func (r Request) addHeaders(headersMap http.Header) {
 	if len(r.UserAgent) > 0 {
 		headersMap.Add("User-Agent", r.UserAgent)
@@ -58,6 +64,7 @@ func valueOrDefault(value, def string) string {
 	return def
 }
 
+// paramParse
 func paramParse(query interface{}) (string, error) {
 	switch query.(type) {
 	case url.Values:
@@ -65,12 +72,15 @@ func paramParse(query interface{}) (string, error) {
 	case *url.Values:
 		return query.(*url.Values).Encode(), nil
 	default:
-		var v = &url.Values{}
+		var (
+			v = &url.Values{}
+		)
 		err := paramParseStruct(v, query)
 		return v.Encode(), err
 	}
 }
 
+// paramParseStruct
 func paramParseStruct(v *url.Values, query interface{}) error {
 	var (
 		va = reflect.ValueOf(query)
@@ -86,7 +96,9 @@ func paramParseStruct(v *url.Values, query interface{}) error {
 	}
 
 	for i := 0; i < t.NumField(); i++ {
-		var name string
+		var (
+			name string
+		)
 
 		field := va.Field(i)
 		typeField := t.Field(i)
@@ -102,7 +114,9 @@ func paramParseStruct(v *url.Values, query interface{}) error {
 
 		name, opts := parseTag(urlTag)
 
-		var omitEmpty, squash bool
+		var (
+			omitEmpty, squash bool
+		)
 		omitEmpty = opts.Contains("omitempty")
 		squash = opts.Contains("squash")
 

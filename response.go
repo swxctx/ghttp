@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// Response ghttp response
 type Response struct {
 	*http.Response
 	Url  string
@@ -16,11 +17,13 @@ type Response struct {
 	req  *http.Request
 }
 
+// Body
 type Body struct {
 	reader           io.ReadCloser
 	compressedReader io.ReadCloser
 }
 
+// Read
 func (b *Body) Read(p []byte) (int, error) {
 	if b.compressedReader != nil {
 		return b.compressedReader.Read(p)
@@ -28,6 +31,7 @@ func (b *Body) Read(p []byte) (int, error) {
 	return b.reader.Read(p)
 }
 
+// Close
 func (b *Body) Close() error {
 	err := b.reader.Close()
 	if b.compressedReader != nil {
@@ -36,10 +40,12 @@ func (b *Body) Close() error {
 	return err
 }
 
+// FromToJson
 func (b *Body) FromToJson(o interface{}) error {
 	return json.NewDecoder(b).Decode(o)
 }
 
+// FromToString
 func (b *Body) FromToString() (string, error) {
 	body, err := ioutil.ReadAll(b)
 	if err != nil {
@@ -48,6 +54,7 @@ func (b *Body) FromToString() (string, error) {
 	return string(body), nil
 }
 
+// Gzip
 func Gzip() *compression {
 	reader := func(buffer io.Reader) (io.ReadCloser, error) {
 		return gzip.NewReader(buffer)
@@ -58,6 +65,7 @@ func Gzip() *compression {
 	return &compression{writer: writer, reader: reader, ContentEncoding: "gzip"}
 }
 
+// Deflate
 func Deflate() *compression {
 	reader := func(buffer io.Reader) (io.ReadCloser, error) {
 		return zlib.NewReader(buffer)
@@ -68,6 +76,7 @@ func Deflate() *compression {
 	return &compression{writer: writer, reader: reader, ContentEncoding: "deflate"}
 }
 
+// Zlib
 func Zlib() *compression {
 	return Deflate()
 }

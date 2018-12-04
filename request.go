@@ -16,13 +16,19 @@ import (
 )
 
 var (
-	DefaultDialer                      = &net.Dialer{Timeout: 1000 * time.Millisecond}
+	// DefaultDialer
+	DefaultDialer = &net.Dialer{Timeout: 1000 * time.Millisecond}
+	// DefaultTransport
 	DefaultTransport http.RoundTripper = &http.Transport{Dial: DefaultDialer.Dial, Proxy: http.ProxyFromEnvironment}
-	DefaultClient                      = &http.Client{Transport: DefaultTransport}
-	proxyTransport   http.RoundTripper
-	proxyClient      *http.Client
+	// DefaultClient
+	DefaultClient = &http.Client{Transport: DefaultTransport}
+	// proxyTransport
+	proxyTransport http.RoundTripper
+	// proxyClient
+	proxyClient *http.Client
 )
 
+// Request ghttp request lib
 type Request struct {
 	headers           []headerElements
 	Method            string
@@ -48,6 +54,7 @@ type Request struct {
 	OnBeforeRequest   func(goxhttp *Request, httpreq *http.Request)
 }
 
+// transportRequestCanceler
 type transportRequestCanceler interface {
 	CancelRequest(*http.Request)
 }
@@ -69,7 +76,9 @@ func (r Request) NewRequest() (*http.Request, error) {
 		r.Url = r.Url + "?" + param
 	}
 
-	var bodyReader io.Reader
+	var (
+		bodyReader io.Reader
+	)
 	if b != nil && r.Compression != nil {
 		buffer := bytes.NewBuffer([]byte{})
 		readBuffer := bufio.NewReader(b)
@@ -118,10 +127,12 @@ func (r Request) NewRequest() (*http.Request, error) {
 
 // Do Initiate a request
 func (r Request) Do() (*Response, error) {
-	var client = DefaultClient
-	var transport = DefaultTransport
-	var resURL string
-	var redirectFailed bool
+	var (
+		client         = DefaultClient
+		transport      = DefaultTransport
+		resURL         string
+		redirectFailed bool
+	)
 
 	r.Method = valueOrDefault(r.Method, "GET")
 
@@ -217,7 +228,9 @@ func (r Request) Do() (*Response, error) {
 			}
 		}
 
-		var response *Response
+		var (
+			response *Response
+		)
 		// response when redirectFailed
 		if redirectFailed {
 			if res != nil {
@@ -252,6 +265,7 @@ func (r Response) CancelRequest() {
 
 }
 
+// cancelRequest
 func cancelRequest(transport interface{}, r *http.Request) {
 	if tp, ok := transport.(transportRequestCanceler); ok {
 		tp.CancelRequest(r)

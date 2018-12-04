@@ -7,6 +7,7 @@ import (
 
 type tagOptions string
 
+// parseTag
 func parseTag(tag string) (string, tagOptions) {
 	if idx := strings.Index(tag, ","); idx != -1 {
 		return tag[:idx], tagOptions(tag[idx+1:])
@@ -14,6 +15,7 @@ func parseTag(tag string) (string, tagOptions) {
 	return tag, tagOptions("")
 }
 
+// Contains
 func (o tagOptions) Contains(optionName string) bool {
 	if len(o) == 0 {
 		return false
@@ -33,6 +35,7 @@ func (o tagOptions) Contains(optionName string) bool {
 	return false
 }
 
+// isValidTag
 func isValidTag(s string) bool {
 	if s == "" {
 		return false
