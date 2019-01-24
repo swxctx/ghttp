@@ -61,12 +61,10 @@ type transportRequestCanceler interface {
 
 // NewRequest new request before do()
 func (r Request) NewRequest() (*http.Request, error) {
-
 	b, e := prepareRequestBody(r.Body)
 	if e != nil {
 		return nil, &Error{Err: e}
 	}
-
 	if r.Query != nil {
 		param, e := paramParse(r.Query)
 		if e != nil {
@@ -144,7 +142,7 @@ func (r Request) Do() (*Response, error) {
 		}
 	}
 
-	if r.Proxy != "" {
+	if len(r.Proxy) != 0 {
 		proxyUrl, err := url.Parse(r.Proxy)
 		if err != nil {
 			return nil, &Error{Err: err}
@@ -162,14 +160,11 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-
 		if len(via) > r.MaxRedirects {
 			redirectFailed = true
 			return errors.New("Error redirecting. MaxRedirects reached")
 		}
-
 		resURL = req.URL.String()
-
 		// 默认不会重定向请求头，重新设置
 		if r.RedirectHeaders {
 			for key, val := range via[0].Header {
@@ -193,7 +188,6 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	req, err := r.NewRequest()
-
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
@@ -215,7 +209,6 @@ func (r Request) Do() (*Response, error) {
 		r.OnBeforeRequest(&r, req)
 	}
 	res, err := client.Do(req)
-
 	if err != nil {
 		if !timeout {
 			if t, ok := err.(reqtimeout); ok {
@@ -244,7 +237,6 @@ func (r Request) Do() (*Response, error) {
 		if redirectFailed && r.MaxRedirects == 0 {
 			return response, nil
 		}
-
 		return response, &Error{timeout: timeout, Err: err}
 	}
 
@@ -255,14 +247,12 @@ func (r Request) Do() (*Response, error) {
 		}
 		return &Response{res, resURL, &Body{reader: res.Body, compressedReader: compressedReader}, req}, nil
 	}
-
 	return &Response{res, resURL, &Body{reader: res.Body}, req}, nil
 }
 
 // CancelRequest cancel like postman
 func (r Response) CancelRequest() {
 	cancelRequest(DefaultTransport, r.req)
-
 }
 
 // cancelRequest
