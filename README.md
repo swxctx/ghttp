@@ -25,44 +25,44 @@ Gohttp主要是对golang-http请求的一些简要封装，使用ghttp可以很�
 ### GET
 Ghttp默认为Get请求，基本请求如下所示：  
 
-```json
+```
 	res, err := ghttp.Request{
-			Url:   "http://127.0.0.1:8080",
-		}.Do()
+		Url:   "http://127.0.0.1:8080",
+	}.Do()
 ```
 ### POST  
 Ghttp使用POST请求与golang请求一致，基本请求如下所示：  
 
-```json
+```
 	res, err := ghttp.Request{
-			Method: "POST",
-			Url:   "http://127.0.0.1:8080",
-		}.Do()
+		Method: "POST",
+		Url:   "http://127.0.0.1:8080",
+	}.Do()
 ```
 ### 请求参数
 Ghttp参数支持interface类型，允许直接将Struce作为参数赋值传递，同时支持tags配置指定参数名称以及忽略参数空值，使用如下所示。  
 #### 使用Struce作为参数  
 直接使用struce作为参数时，默认元素小写后作为url参数，下面例子请求后生成url如request所示：  
 
-```json  
+```  
 	// request-> Get http://127.0.0.1:8080?name=xc&password=xc
 	type User struct {
-			Name     string
-			Password string
-		}
-		user := User{
-			Name:     "xc",
-			Password: "xc",
-		}
-		res, err := ghttp.Request{
-			Url:   "http://127.0.0.1:8080",
-			Query: user,
-		}.Do()
+		Name     string
+		Password string
+	}
+	user := User{
+		Name:     "xc",
+		Password: "xc",
+	}
+	res, err := ghttp.Request{
+		Url:   "http://127.0.0.1:8080",
+		Query: user,
+	}.Do()
 ```
 #### Tags配置参数
 Ghttp支持将参数在结构体中配置为指定名称，关键字"-"表示此参数忽略不会拼接到url中，"omitempty"关键词表示该字段为空时不做拼接，可参考下面例子生成的url。  
 
-```json  
+``` 
 	// Get http://127.0.0.1:8080?name=xc
 	type User struct {
 		Name     string `json:"name"`
@@ -86,8 +86,8 @@ Ghttp支持结构体嵌套的方式拼接参数，这应该也是最为常见的
 ### Header
 Ghttp支持Head添加处理，如下所示：
 
-```json
-type User struct {
+```
+	type User struct {
 		Name     string
 		Password string
 	}
@@ -107,7 +107,7 @@ type User struct {
 
 ### Cookie
 
-```json
+```
 	res, err := ghttp.Request{
 		Url:     "http://www.baidu.com",
 		Timeout: 100 * time.Millisecond,
@@ -115,8 +115,8 @@ type User struct {
 ```
 ### 响应数据结构转换-Struct
 
-```json
-type User struct {
+```
+	type User struct {
 		Name     string `json:"name"`
 		Password string `json:"password"`
 		Sex      string `json:"sex"`
@@ -134,8 +134,8 @@ type User struct {
 
 ### Proxy
 
-```json
-res, err := ghttp.Request{
+```
+	res, err := ghttp.Request{
 		Url:     "http://127.0.0.1:8080",
 		Timeout: 100 * time.Millisecond,
 		Proxy:   "http://127.0.0.1:8088",
