@@ -5,7 +5,9 @@ import (
 	"unicode"
 )
 
-type tagOptions string
+type (
+	tagOptions string
+)
 
 // parseTag
 func parseTag(tag string) (string, tagOptions) {
@@ -21,7 +23,7 @@ func (o tagOptions) Contains(optionName string) bool {
 		return false
 	}
 	s := string(o)
-	for s != "" {
+	for len(s) != 0 {
 		var next string
 		i := strings.Index(s, ",")
 		if i >= 0 {
@@ -37,7 +39,7 @@ func (o tagOptions) Contains(optionName string) bool {
 
 // isValidTag
 func isValidTag(s string) bool {
-	if s == "" {
+	if len(s) == 0 {
 		return false
 	}
 	for _, c := range s {
