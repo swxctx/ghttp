@@ -62,7 +62,11 @@ func Gzip() *compression {
 	writer := func(buffer io.Writer) (io.WriteCloser, error) {
 		return gzip.NewWriter(buffer), nil
 	}
-	return &compression{writer: writer, reader: reader, ContentEncoding: "gzip"}
+	return &compression{
+		writer:          writer,
+		reader:          reader,
+		ContentEncoding: "gzip",
+	}
 }
 
 // Deflate
@@ -73,7 +77,11 @@ func Deflate() *compression {
 	writer := func(buffer io.Writer) (io.WriteCloser, error) {
 		return zlib.NewWriter(buffer), nil
 	}
-	return &compression{writer: writer, reader: reader, ContentEncoding: "deflate"}
+	return &compression{
+		writer:          writer,
+		reader:          reader,
+		ContentEncoding: "deflate",
+	}
 }
 
 // Zlib

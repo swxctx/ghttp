@@ -1,4 +1,4 @@
-package ghttp_test
+package exampl
 
 import (
 	"fmt"

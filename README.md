@@ -8,8 +8,7 @@
 $ go get -u github.com/swxctx/ghttp
 ```
 
-### 序言
-因为做的一些项目涉及到golang的http请求及响应json数据的封装，所以想要封装一些简单的方法用于对Http请求的参数封装及响应数据的解析，使之可以很方便的对响应数据进行转换到Struct；通过查阅一些资料以及借鉴一些开源的项目，经过对自身项目的适应处理后产生了Ghttp。   
+### 序言  
 Gohttp主要是对golang-http请求的一些简要封装，使用ghttp可以很方便的对http的请求、响应等做操作。目前具备如下几种功能：  
 - 支持Http常用请求  
 - 支持query及body参数  

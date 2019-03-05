@@ -148,7 +148,7 @@ func (r Request) Do() (*Response, error) {
 			return nil, &Error{Err: err}
 		}
 
-		//如果指定，则需要重新构建
+		// 如果指定，则需要重新构建
 		if proxyTransport == nil || client.Jar != nil {
 			proxyTransport = &http.Transport{Dial: DefaultDialer.Dial, Proxy: http.ProxyURL(proxyUrl)}
 			proxyClient = &http.Client{Transport: proxyTransport, Jar: client.Jar}
@@ -179,7 +179,9 @@ func (r Request) Do() (*Response, error) {
 			if transport.TLSClientConfig != nil {
 				transport.TLSClientConfig.InsecureSkipVerify = true
 			} else {
-				transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+				transport.TLSClientConfig = &tls.Config{
+					InsecureSkipVerify: true,
+				}
 			}
 		} else if transport.TLSClientConfig != nil {
 			// default
@@ -227,9 +229,21 @@ func (r Request) Do() (*Response, error) {
 		// response when redirectFailed
 		if redirectFailed {
 			if res != nil {
-				response = &Response{res, resURL, &Body{reader: res.Body}, req}
+				response = &Response{
+					res,
+					resURL,
+					&Body{
+						reader: res.Body,
+					},
+					req,
+				}
 			} else {
-				response = &Response{res, resURL, nil, req}
+				response = &Response{
+					res,
+					resURL,
+					nil,
+					req,
+				}
 			}
 		}
 
@@ -237,7 +251,10 @@ func (r Request) Do() (*Response, error) {
 		if redirectFailed && r.MaxRedirects == 0 {
 			return response, nil
 		}
-		return response, &Error{timeout: timeout, Err: err}
+		return response, &Error{
+			timeout: timeout,
+			Err:     err,
+		}
 	}
 
 	if r.Compression != nil && strings.Contains(res.Header.Get("Content-Encoding"), r.Compression.ContentEncoding) {
@@ -245,9 +262,25 @@ func (r Request) Do() (*Response, error) {
 		if err != nil {
 			return nil, &Error{Err: err}
 		}
-		return &Response{res, resURL, &Body{reader: res.Body, compressedReader: compressedReader}, req}, nil
+		return &Response{
+				res, resURL,
+				&Body{
+					reader:           res.Body,
+					compressedReader: compressedReader,
+				},
+				req,
+			},
+			nil
 	}
-	return &Response{res, resURL, &Body{reader: res.Body}, req}, nil
+	return &Response{
+			res,
+			resURL,
+			&Body{
+				reader: res.Body,
+			},
+			req,
+		},
+		nil
 }
 
 // CancelRequest cancel like postman
