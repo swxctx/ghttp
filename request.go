@@ -148,7 +148,7 @@ func (r Request) Do() (*Response, error) {
 			return nil, &Error{Err: err}
 		}
 
-		//如果指定，则需要重新构建
+		// 如果指定，则需要重新构建
 		if proxyTransport == nil || client.Jar != nil {
 			proxyTransport = &http.Transport{Dial: DefaultDialer.Dial, Proxy: http.ProxyURL(proxyUrl)}
 			proxyClient = &http.Client{Transport: proxyTransport, Jar: client.Jar}
