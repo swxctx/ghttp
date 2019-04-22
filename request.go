@@ -17,7 +17,7 @@ import (
 
 var (
 	// DefaultDialer
-	DefaultDialer = &net.Dialer{Timeout: 1000 * time.Millisecond}
+	DefaultDialer = &net.Dialer{Timeout: 2000 * time.Millisecond}
 	// DefaultTransport
 	DefaultTransport http.RoundTripper = &http.Transport{Dial: DefaultDialer.Dial, Proxy: http.ProxyFromEnvironment}
 	// DefaultClient
