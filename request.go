@@ -17,7 +17,7 @@ import (
 
 var (
 	// DefaultDialer
-	DefaultDialer = &net.Dialer{Timeout: 1000 * time.Millisecond}
+	DefaultDialer = &net.Dialer{Timeout: 2000 * time.Millisecond}
 	// DefaultTransport
 	DefaultTransport http.RoundTripper = &http.Transport{Dial: DefaultDialer.Dial, Proxy: http.ProxyFromEnvironment}
 	// DefaultClient
@@ -62,12 +62,10 @@ type transportRequestCanceler interface {
 
 // NewRequest new request before do()
 func (r Request) NewRequest() (*http.Request, error) {
-
 	b, e := prepareRequestBody(r.Body)
 	if e != nil {
 		return nil, &Error{Err: e}
 	}
-
 	if r.Query != nil {
 		param, e := paramParse(r.Query)
 		if e != nil {
@@ -145,13 +143,13 @@ func (r Request) Do() (*Response, error) {
 		}
 	}
 
-	if r.Proxy != "" {
+	if len(r.Proxy) != 0 {
 		proxyUrl, err := url.Parse(r.Proxy)
 		if err != nil {
 			return nil, &Error{Err: err}
 		}
 
-		//如果指定，则需要重新构建
+		// 如果指定，则需要重新构建
 		if proxyTransport == nil || client.Jar != nil {
 			proxyTransport = &http.Transport{Dial: DefaultDialer.Dial, Proxy: http.ProxyURL(proxyUrl)}
 			proxyClient = &http.Client{Transport: proxyTransport, Jar: client.Jar}
@@ -163,14 +161,11 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-
 		if len(via) > r.MaxRedirects {
 			redirectFailed = true
 			return errors.New("Error redirecting. MaxRedirects reached")
 		}
-
 		resURL = req.URL.String()
-
 		// 默认不会重定向请求头，重新设置
 		if r.RedirectHeaders {
 			for key, val := range via[0].Header {
@@ -185,10 +180,8 @@ func (r Request) Do() (*Response, error) {
 			if r.TlsConfig != nil {
 				transport.TLSClientConfig = r.TlsConfig
 			} else {
-				if transport.TLSClientConfig != nil {
-					transport.TLSClientConfig.InsecureSkipVerify = true
-				} else {
-					transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+				transport.TLSClientConfig = &tls.Config{
+					InsecureSkipVerify: true,
 				}
 			}
 		} else if transport.TLSClientConfig != nil {
@@ -198,7 +191,6 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	req, err := r.NewRequest()
-
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
@@ -220,7 +212,6 @@ func (r Request) Do() (*Response, error) {
 		r.OnBeforeRequest(&r, req)
 	}
 	res, err := client.Do(req)
-
 	if err != nil {
 		if !timeout {
 			if t, ok := err.(reqtimeout); ok {
@@ -239,9 +230,21 @@ func (r Request) Do() (*Response, error) {
 		// response when redirectFailed
 		if redirectFailed {
 			if res != nil {
-				response = &Response{res, resURL, &Body{reader: res.Body}, req}
+				response = &Response{
+					res,
+					resURL,
+					&Body{
+						reader: res.Body,
+					},
+					req,
+				}
 			} else {
-				response = &Response{res, resURL, nil, req}
+				response = &Response{
+					res,
+					resURL,
+					nil,
+					req,
+				}
 			}
 		}
 
@@ -249,8 +252,10 @@ func (r Request) Do() (*Response, error) {
 		if redirectFailed && r.MaxRedirects == 0 {
 			return response, nil
 		}
-
-		return response, &Error{timeout: timeout, Err: err}
+		return response, &Error{
+			timeout: timeout,
+			Err:     err,
+		}
 	}
 
 	if r.Compression != nil && strings.Contains(res.Header.Get("Content-Encoding"), r.Compression.ContentEncoding) {
@@ -258,16 +263,30 @@ func (r Request) Do() (*Response, error) {
 		if err != nil {
 			return nil, &Error{Err: err}
 		}
-		return &Response{res, resURL, &Body{reader: res.Body, compressedReader: compressedReader}, req}, nil
+		return &Response{
+				res, resURL,
+				&Body{
+					reader:           res.Body,
+					compressedReader: compressedReader,
+				},
+				req,
+			},
+			nil
 	}
-
-	return &Response{res, resURL, &Body{reader: res.Body}, req}, nil
+	return &Response{
+			res,
+			resURL,
+			&Body{
+				reader: res.Body,
+			},
+			req,
+		},
+		nil
 }
 
 // CancelRequest cancel like postman
 func (r Response) CancelRequest() {
 	cancelRequest(DefaultTransport, r.req)
-
 }
 
 // cancelRequest
