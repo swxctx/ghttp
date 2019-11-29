@@ -43,6 +43,7 @@ type Request struct {
 	UserAgent         string
 	Host              string
 	Insecure          bool
+	TlsConfig         *tls.Config
 	MaxRedirects      int
 	RedirectHeaders   bool
 	Proxy             string
@@ -181,10 +182,14 @@ func (r Request) Do() (*Response, error) {
 
 	if transport, ok := transport.(*http.Transport); ok {
 		if r.Insecure {
-			if transport.TLSClientConfig != nil {
-				transport.TLSClientConfig.InsecureSkipVerify = true
+			if r.TlsConfig != nil {
+				transport.TLSClientConfig = r.TlsConfig
 			} else {
-				transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+				if transport.TLSClientConfig != nil {
+					transport.TLSClientConfig.InsecureSkipVerify = true
+				} else {
+					transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+				}
 			}
 		} else if transport.TLSClientConfig != nil {
 			// default

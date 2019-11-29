@@ -2,6 +2,7 @@ package ghttp
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -155,5 +156,18 @@ func prepareRequestBody(b interface{}) (io.Reader, error) {
 			return bytes.NewReader(j), nil
 		}
 		return nil, err
+	}
+}
+
+// GetTlsConfig 生成tls config
+func GetTlsConfig(cerPath, keyPath string) *tls.Config {
+	// get certs
+	certs, err := tls.LoadX509KeyPair(cerPath, keyPath)
+	if err != nil {
+		return &tls.Config{InsecureSkipVerify: true}
+	}
+
+	return &tls.Config{
+		Certificates: []tls.Certificate{certs},
 	}
 }
