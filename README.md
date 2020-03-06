@@ -39,9 +39,9 @@ res, err := ghttp.Request{
 }.Do()
 ```
 ### 请求参数
-Ghttp参数支持interface类型，允许直接将Struce作为参数赋值传递，同时支持tags配置指定参数名称以及忽略参数空值，使用如下所示。  
-#### 使用Struce作为参数  
-直接使用struce作为参数时，默认元素小写后作为url参数，下面例子请求后生成url如request所示：  
+Ghttp参数支持interface类型，允许直接将Struct作为参数赋值传递，同时支持tags配置指定参数名称以及忽略参数空值，使用如下所示。  
+#### 使用Struct作为参数  
+直接使用struct作为参数时，默认元素小写后作为url参数，下面例子请求后生成url如request所示：  
 
 ```  
 // request-> Get http://127.0.0.1:8080?name=xc&password=xc
