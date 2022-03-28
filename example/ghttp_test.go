@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 
@@ -206,6 +207,24 @@ func TestDeflate(t *testing.T) {
 		Url:         "http://www.baidu.com",
 		Compression: ghttp.Deflate(),
 	}.Do()
+	if err != nil {
+		log.Panicln(err)
+	}
+	log.Println(res)
+}
+
+func TestForm(t *testing.T) {
+	parmas := url.Values{}
+	parmas.Set("idcard", "123")
+	parmas.Set("name", "123")
+	req := ghttp.Request{
+		Method:      "POST",
+		Url:         "http://www.baidu.com",
+		ShowDebug: true,
+		Body: parmas,
+	}
+	req.AddHeader("Content-Type", "application/x-www-form-urlencoded")
+	res, err := req.Do()
 	if err != nil {
 		log.Panicln(err)
 	}
