@@ -148,6 +148,10 @@ func prepareRequestBody(b interface{}) (io.Reader, error) {
 		return b.(io.Reader), nil
 	case []byte:
 		return bytes.NewReader(b.([]byte)), nil
+	case url.Values:
+		return strings.NewReader(b.(url.Values).Encode()), nil
+	case *url.Values:
+		return strings.NewReader(b.(*url.Values).Encode()), nil
 	case nil:
 		return nil, nil
 	default:
