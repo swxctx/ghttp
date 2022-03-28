@@ -218,10 +218,10 @@ func TestForm(t *testing.T) {
 	parmas.Set("idcard", "123")
 	parmas.Set("name", "123")
 	req := ghttp.Request{
-		Method:      "POST",
-		Url:         "http://www.baidu.com",
+		Method:    "POST",
+		Url:       "http://www.baidu.com",
 		ShowDebug: true,
-		Body: parmas,
+		Body:      parmas,
 	}
 	req.AddHeader("Content-Type", "application/x-www-form-urlencoded")
 	res, err := req.Do()
