@@ -38,6 +38,26 @@ res, err := ghttp.Request{
 	Url:   "http://127.0.0.1:8080",
 }.Do()
 ```
+### application/x-www-form-urlencoded
+
+```
+parmas := url.Values{}
+parmas.Set("idcard", "123")
+parmas.Set("name", "123")
+req := ghttp.Request{
+	Method:    "POST",
+	Url:       "http://www.baidu.com",
+	ShowDebug: true,
+	Body:      parmas,
+}
+req.AddHeader("Content-Type", "application/x-www-form-urlencoded")
+res, err := req.Do()
+if err != nil {
+	log.Panicln(err)
+}
+log.Println(res)
+```
+
 ### 请求参数
 Ghttp参数支持interface类型，允许直接将Struct作为参数赋值传递，同时支持tags配置指定参数名称以及忽略参数空值，使用如下所示。  
 #### 使用Struct作为参数  
